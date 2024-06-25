@@ -31,7 +31,6 @@ app.use('/enterprenuer', enterprenuer);
 app.use('/investor', investor);
 
 // MongoDB connection
-// const dbURI = 'mongodb://localhost:27017/tech'; // MongoDB Compass
 const dbURI = 'mongodb+srv://Fundnest:8877446687@fundnest.lris2bh.mongodb.net/'; // MongoDB remote
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })

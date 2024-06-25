@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../model/user'); // Adjust the path based on your project structure
+const ChatMessage = require('../model/ChatMessage');
+
+
 
 
 //Edit Profile
@@ -114,3 +117,95 @@ exports.getAllInvestors = async (req, res) => {
     }
 };
 
+//Get Investor By ID
+exports.getInvestorById = async (req, res) => {
+    const { id } = req.params;
+    
+    try {
+        const investor = await User.findOne({ _id: id, role: 'investor' });
+
+        if (!investor) {
+            return res.status(400).send({ message: 'Investor not found', status: 400 });
+        }
+
+        return res.status(200).send({ investor, status: 200 });
+    } catch (error) {
+        console.error('Error in getInvestorById:', error);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+// Send message to an investor
+exports.sendMessageToInvestor = async (req, res) => {
+    const { receiverId, message, roomId } = req.body;
+    const senderId = req.user._id;
+
+    try {
+        const newMessage = new ChatMessage({
+            senderId,
+            receiverId,
+            message,
+            roomId
+        });
+
+        await newMessage.save();
+        return res.status(200).send({ message: 'Message sent successfully', status: 200 });
+    } catch (error) {
+        console.error('Error in sendMessageToInvestor:', error);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+// Get messages with a specific investor
+// exports.getMessagesWithInvestor = async (req, res) => {
+//     const { investorId } = req.params;
+//     const entrepreneurId = req.user._id; 
+
+//     try {
+//         const messages = await ChatMessage.find({
+//             $or: [
+//                 { senderId: entrepreneurId, receiverId: investorId },
+//                 { senderId: investorId, receiverId: entrepreneurId }
+//             ]
+//         }).sort({ timestamp: 1 });
+
+//         return res.status(200).send({ messages, status: 200 });
+//     } catch (error) {
+//         console.error('Error in getMessagesWithInvestor:', error);
+//         return res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+// };
+// exports.getMessagesWithInvestor = async (req, res) => {
+//     const { investorId } = req.params;
+//     const entrepreneurId = req.user._id; 
+
+//     try {
+//         const messages = await ChatMessage.find({
+//             $or: [
+//                 { senderId: entrepreneurId, receiverId: investorId },
+//                 { senderId: investorId, receiverId: entrepreneurId }
+//             ]
+//         }).sort({ timestamp: 1 });
+
+//         return res.status(200).send({ messages, status: 200 });
+//     } catch (error) {
+//         console.error('Error in getMessagesWithInvestor:', error);
+//         return res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+// };
+
+
+
+// Get messages by room ID
+exports.getMessagesByRoomId = async (req, res) => {
+    const { roomId } = req.params;
+
+    try {
+        const messages = await ChatMessage.find({ roomId }).sort({ timestamp: 1 });
+
+        return res.status(200).send({ messages, status: 200 });
+    } catch (error) {
+        console.error('Error in getMessagesByRoomId:', error);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};

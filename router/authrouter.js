@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { signup, login, logout} = require('../controller/authcontroller');
+const { signup, login, logout, getMessagesByRoomId} = require('../controller/authcontroller');
 
 router.post('/signup', signup);
 router.post('/login', login);

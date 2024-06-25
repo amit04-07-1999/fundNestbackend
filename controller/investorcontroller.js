@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../model/user'); // Adjust the path based on your project structure
+const ChatMessage = require('../model/ChatMessage');
 
 
 //Edit Profile
@@ -113,3 +114,80 @@ exports.getAllEnterprenuers = async (req, res) => {
     }
 };
 
+// Get entrepreneur by ID
+exports.getEntrepreneurById = async (req, res) => {
+    const {id} = req.params;
+
+    try {
+        const entrepreneur = await User.findOne({ _id: id, role: 'enterprenuer' });
+
+        if (!entrepreneur) {
+            return res.status(404).json({ message: 'Entrepreneur not found', status: 400 });
+        }
+
+        return res.status(200).json({ entrepreneur, status: 200 });
+    } catch (error) {
+        console.error('Error in getEntrepreneurById:', error);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+// Send message to an entrepreneur
+exports.sendMessageToEntrepreneur = async (req, res) => {
+    const { receiverId, message, roomId } = req.body;
+    const senderId = req.user._id; 
+
+    try {
+        const newMessage = new ChatMessage({
+            senderId,
+            receiverId,
+            message,
+            roomId
+        });
+
+        await newMessage.save();
+        return res.status(200).send({ message: 'Message sent successfully', status: 200 });
+    } catch (error) {
+        console.error('Error in sendMessageToEntrepreneur:', error);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+// Get messages with a specific entrepreneur
+exports.getMessagesWithEntrepreneur = async (req, res) => {
+    const { entrepreneurId } = req.params;
+    const investorId = req.user._id;
+
+    try {
+        const messages = await ChatMessage.find({
+            $or: [
+                { senderId: investorId, receiverId: entrepreneurId },
+                { senderId: entrepreneurId, receiverId: investorId }
+            ]
+        }).sort({ timestamp: 1 });
+
+        return res.status(200).send({ messages, status: 200 });
+    } catch (error) {
+        console.error('Error in getMessagesWithEntrepreneur:', error);
+        return res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+// exports.getMessagesWithEntrepreneur = async (req, res) => {
+//     const { entrepreneurId } = req.params;
+//     const investorId = req.user._id;
+
+//     try {
+//         const messages = await ChatMessage.find({
+//             $or: [
+//                 { senderId: investorId, receiverId: entrepreneurId },
+//                 { senderId: entrepreneurId, receiverId: investorId }
+//             ]
+//         }).sort({ timestamp: 1 });
+
+//         return res.status(200).send({ messages, status: 200 });
+//     } catch (error) {
+//         console.error('Error in getMessagesWithEntrepreneur:', error);
+//         return res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+// };

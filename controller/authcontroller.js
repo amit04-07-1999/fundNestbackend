@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../model/user');
+// const ChatMessage = require('../model/ChatMessage');
 
 const SALT_ROUNDS = 10;
 const SECRET_KEY = 'aaaaaaaaaaaaabbbbbbbbbbbbbbbbbcccccccccccccccccccc';
@@ -87,3 +88,17 @@ exports.logout = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error', status: 500 });
     }
 };
+
+// // Get messages by room ID
+// exports.getMessagesByRoomId = async (req, res) => {
+//     const { roomId } = req.params;
+
+//     try {
+//         const messages = await ChatMessage.find({ roomId }).sort({ timestamp: 1 });
+
+//         return res.status(200).send({ messages, status: 200 });
+//     } catch (error) {
+//         console.error('Error in getMessagesByRoomId:', error);
+//         return res.status(500).json({ message: 'Internal server error', error: error.message });
+//     }
+// };
