@@ -15,6 +15,7 @@ const check = require('./router/checkrouter');
 const businessIdea = require('./router/businessIdeaRoutes');
 const appointments = require('./router/appointmentRoutes');
 const Videos = require('./router/videoRoutes');
+const Webinar= require('./router/webinarRoutes');
 const { middleware } = require('./middleware/jwtmiddleware');
 
 
@@ -36,6 +37,7 @@ app.use('/investor', investor);
 app.use('/businessidea', businessIdea);
 app.use('/appointments', appointments);
 app.use('/videos', Videos);
+app.use('/webinars', Webinar);
  
 // MongoDB connection
 const dbURI = 'mongodb+srv://Fundnest:8877446687@fundnest.lris2bh.mongodb.net/'; // MongoDB remote
