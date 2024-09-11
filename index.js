@@ -4,20 +4,18 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-
 dotenv.config();
 
 // Importing routers and middleware
 const auth = require('./router/authrouter');
-const enterprenuer = require('./router/enterprenuerrouter');
+const entrepreneur = require('./router/enterprenuerrouter');
 const investor = require('./router/investorrouter');
 const check = require('./router/checkrouter');
-const businessIdea = require('./router/businessIdeaRoutes');
+// const businessIdea = require('./router/businessIdeaRoutes');
 const appointments = require('./router/appointmentRoutes');
 const Videos = require('./router/videoRoutes');
-const Webinar= require('./router/webinarRoutes');
-const Idea= require('./router/ideaRoutes');
-const FAQs= require('./router/faqsRoutes');
+const Webinar = require('./router/webinarRoutes');
+const FAQs = require('./router/faqsRoutes');
 const { middleware } = require('./middleware/jwtmiddleware');
 
 
@@ -34,19 +32,18 @@ app.use(bodyParser.json());
 app.use('/auth', auth);
 app.use(middleware);
 app.use('/check', check);
-app.use('/enterprenuer', enterprenuer);
+app.use('/entrepreneur', entrepreneur);
 app.use('/investor', investor);
-app.use('/businessidea', businessIdea);
+// app.use('/api', businessIdea);
 app.use('/appointments', appointments);
 app.use('/videos', Videos);
 app.use('/webinars', Webinar);
-app.use('/api', Idea);
 app.use('/faqs', FAQs);
- 
+
 // MongoDB connection
 const dbURI = 'mongodb+srv://Fundnest:8877446687@fundnest.lris2bh.mongodb.net/'; // MongoDB remote
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbURI)
     .then(() => {
         console.log('Connected to MongoDB Server');
     })

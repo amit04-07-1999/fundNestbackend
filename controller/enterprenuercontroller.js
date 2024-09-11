@@ -10,14 +10,14 @@ exports.editProfile = async (req, res) => {
     const { name, newemail, companyname, designation, experience, educationdetails, description } = req.body;
     const email = req.email;
     const role = req.role;
-    
+
     try {
         // Find the current user based on email and role
         const currentUser = await User.findOne({ email, role });
 
         // Check if user exists and has the correct role
-        if (!currentUser || currentUser.role !== 'enterprenuer') {
-            return res.status(400).send({ message: 'Enterprenuer not found or you are not an Enterprenuer', status: 400 });
+        if (!currentUser || currentUser.role !== 'entrepreneur') {
+            return res.status(400).send({ message: 'entrepreneur not found or you are not an entrepreneur', status: 400 });
         }
 
         // Update user fields if provided
@@ -67,14 +67,14 @@ exports.editProfile = async (req, res) => {
 
 
 
-//Get curent Enterprenuer
+//Get curent entrepreneur
 exports.getCurrentUser = async (req, res) => {
     const email = req.email;
     const role = req.role;
     try {
         const currentUser = await User.findOne({ email: email, role: role });
-        if (!currentUser || currentUser.role !== 'enterprenuer') {
-            return res.status(400).send({ message: 'User not found,  or you are not an enterprenuer', status: 400 });
+        if (!currentUser || currentUser.role !== 'entrepreneur') {
+            return res.status(400).send({ message: 'User not found,  or you are not an entrepreneur', status: 400 });
         };
         return res.status(200).send({ currentUser, status: 200 });
     }
@@ -84,16 +84,16 @@ exports.getCurrentUser = async (req, res) => {
     }
 };
 
-//Delete Current Enterprenuer
-exports.deleteEnterprenuer = async (req, res) => {
+//Delete Current entrepreneur
+exports.deleteentrepreneur = async (req, res) => {
     const email = req.email;
     const role = req.role;
     try {
         const currentUser = await User.findOne({ email: email, role: role });
-        if (!currentUser || currentUser.role !== 'enterprenuer') {
-            return res.status(400).send({ message: 'User not found , or your are not an enterprenuer', status: 400 });
+        if (!currentUser || currentUser.role !== 'entrepreneur') {
+            return res.status(400).send({ message: 'User not found , or your are not an entrepreneur', status: 400 });
         };
-        await currentUser.deleteOne({ email: email});
+        await currentUser.deleteOne({ email: email });
         return res.status(200).send({ message: 'User deleted successfully', status: 200 });
     }
     catch (error) {
@@ -120,7 +120,7 @@ exports.getAllInvestors = async (req, res) => {
 //Get Investor By ID
 exports.getInvestorById = async (req, res) => {
     const { id } = req.params;
-    
+
     try {
         const investor = await User.findOne({ _id: id, role: 'investor' });
 

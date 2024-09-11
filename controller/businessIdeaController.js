@@ -1,85 +1,45 @@
-const BusinessIdea = require('../model/BusinessIdea');
-// const User = require('../models/User');
+const Business = require('../model/BusinessIdea');
+const Razorpay = require('razorpay');
 
-// Create a new business idea
-exports.createBusinessIdea = async (req, res) => {
-  try {
-    const { yourName, companyName, goal, domain, content } = req.body;
-    const userId = req.user._id;
 
-    const businessIdea = new BusinessIdea({
-      user: userId,
-      yourName,
-      companyName,
-      goal,
-      domain,
-      content
-    });
+// Initialize Razorpay instance
+const razorpay = new Razorpay({
+    key_id: 'rzp_test_n5oTuMseyDclhS',
+    key_secret: 'eR0Agm0HEGChnUp5Oi1mqUWc'
+});
 
-    await businessIdea.save();
-    res.status(201).json(businessIdea);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to create business idea' });
-  }
-};
+// Create a new webinar booking
+const createBusinessIdea = async (req, res) => {
+    try {
+        const { name, email, purposeOfBooking } = req.body;
 
-// Get all business ideas
-exports.getBusinessIdeas = async (req, res) => {
-  try {
-    const businessIdeas = await BusinessIdea.find().populate('user', 'name email');
-    res.status(200).json(businessIdeas);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to retrieve business ideas' });
-  }
-};
+        // Create the webinar booking in the database
+        const newWebinar = new Business({ name, email, purposeOfBooking });
+        await newWebinar.save();
 
-// Get a single business idea by ID
-exports.getBusinessIdeaById = async (req, res) => {
-  try {
-    const businessIdea = await BusinessIdea.findById(req.params.id).populate('user', 'name email');
-    if (!businessIdea) {
-      return res.status(404).json({ message: 'Business idea not found' });
+        // Create Razorpay order
+        const paymentAmount = 1500; // Amount in the smallest currency unit (e.g., paise for INR)
+        const currency = 'INR';
+        const options = {
+            amount: paymentAmount * 100, // amount in the smallest currency unit
+            currency: currency,
+            receipt: `receipt_order_${newWebinar._id}`,
+            payment_capture: 1 // auto capture
+        };
+
+        const order = await razorpay.orders.create(options);
+
+        // Send the Razorpay order details to the client
+        res.status(201).json({
+            webinar: newWebinar,
+            razorpayOrder: order
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
-    res.status(200).json(businessIdea);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to retrieve business idea' });
-  }
 };
 
-// Update a business idea by ID
-exports.updateBusinessIdea = async (req, res) => {
-  try {
-    const { companyName, goal, domain, content } = req.body;
-    const businessIdea = await BusinessIdea.findByIdAndUpdate(
-      req.params.id,
-      { companyName, goal, domain, content },
-      { new: true, runValidators: true }
-    );
 
-    if (!businessIdea) {
-      return res.status(404).json({ message: 'Business idea not found' });
-    }
-
-    res.status(200).json(businessIdea);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to update business idea' });
-  }
-};
-
-// Delete a business idea by ID
-exports.deleteBusinessIdea = async (req, res) => {
-  try {
-    const businessIdea = await BusinessIdea.findByIdAndDelete(req.params.id);
-    if (!businessIdea) {
-      return res.status(404).json({ message: 'Business idea not found' });
-    }
-    res.status(200).json({ message: 'Business idea deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Failed to delete business idea' });
-  }
+module.exports = {
+  createBusinessIdea,
 };

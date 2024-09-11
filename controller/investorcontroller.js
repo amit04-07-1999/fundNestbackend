@@ -8,14 +8,14 @@ exports.editProfile = async (req, res) => {
     const { name, newemail, companyname, designation, experience, educationdetails, description } = req.body;
     const email = req.email;
     const role = req.role;
-    
+
     try {
         // Find the current user based on email and role
         const currentUser = await User.findOne({ email, role });
 
         // Check if user exists and has the correct role
         if (!currentUser || currentUser.role !== 'investor') {
-            return res.status(400).send({ message: 'Investor not found, or you are not an investor', status: 400});
+            return res.status(400).send({ message: 'Investor not found, or you are not an investor', status: 400 });
         };
 
         // Update user fields if provided
@@ -90,7 +90,7 @@ exports.deleteUser = async (req, res) => {
         if (!currentUser || currentUser.role !== 'investor') {
             return res.status(400).send({ message: 'User not found , or your are not an investor', status: 400 });
         };
-        await currentUser.deleteOne({ email: email});
+        await currentUser.deleteOne({ email: email });
         return res.status(200).send({ message: 'Investor deleted successfully', status: 200 });
     }
     catch (error) {
@@ -99,12 +99,12 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-//Get all list of Enterprenuers
-exports.getAllEnterprenuers = async (req, res) => {
+//Get all list of entrepreneurs
+exports.getAllentrepreneurs = async (req, res) => {
     try {
-        const investorsList = await User.find({ role: 'enterprenuer' });
+        const investorsList = await User.find({ role: 'entrepreneur' });
         if (!investorsList) {
-            return res.status(400).send({ message: 'No enterprenuer found', status: 400 });
+            return res.status(400).send({ message: 'No entrepreneur found', status: 400 });
         };
         return res.status(200).send({ investorsList, status: 200 });
     }
@@ -116,10 +116,10 @@ exports.getAllEnterprenuers = async (req, res) => {
 
 // Get entrepreneur by ID
 exports.getEntrepreneurById = async (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
 
     try {
-        const entrepreneur = await User.findOne({ _id: id, role: 'enterprenuer' });
+        const entrepreneur = await User.findOne({ _id: id, role: 'entrepreneur' });
 
         if (!entrepreneur) {
             return res.status(404).json({ message: 'Entrepreneur not found', status: 400 });
@@ -135,7 +135,7 @@ exports.getEntrepreneurById = async (req, res) => {
 // Send message to an entrepreneur
 exports.sendMessageToEntrepreneur = async (req, res) => {
     const { receiverId, message, roomId } = req.body;
-    const senderId = req.user._id; 
+    const senderId = req.user._id;
 
     try {
         const newMessage = new ChatMessage({

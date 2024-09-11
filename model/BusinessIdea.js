@@ -7,30 +7,49 @@ const businessIdeaSchema = new Schema({
     required: true,
     ref: 'User'
   },
-  yourName: {
+  email: {
     type: String,
-    required: true,
+    required: true
   },
-  companyName: {
+  company: {
     type: String,
-    required: true,
+    required: true
+  },
+  phone: {
+    type: String,
+    required: true
   },
   goal: {
     type: String,
-    required: true,
+    required: true
   },
   domain: {
     type: String,
-    required: true,
+    required: true
+  },
+  qualification: {
+    type: String,
+    required: true
   },
   content: {
     type: String,
-    required: true,
+    required: true
+  },
+  attachments: {
+    type: [String],
+    required: true
+  },
+  paymentAmount: {
+    type: Number,
+    required: true
   }
 }, {
   timestamps: true
 });
 
 const BusinessIdea = mongoose.model('BusinessIdea', businessIdeaSchema);
-
 module.exports = BusinessIdea;
+
+
+
+
